@@ -99,7 +99,7 @@ module Administrate
       private
 
       def new_resource
-        @new_resource ||= associated_class.new
+        @new_resource ||= association.build.tap { |new| association.records.delete(new) }
       end
 
       def skipped_fields
