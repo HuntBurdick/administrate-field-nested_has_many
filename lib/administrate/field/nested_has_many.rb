@@ -98,6 +98,10 @@ module Administrate
 
       private
 
+      def association
+        resource.send(self.association_name)
+      end
+
       def new_resource
         @new_resource ||= association.build.tap { |new| association.records.delete(new) }
       end
