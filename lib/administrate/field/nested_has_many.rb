@@ -4,6 +4,7 @@ require "rails"
 require "administrate/engine"
 require "administrate/version"
 require "cocoon"
+require "administrate/page/nested_collection"
 
 module Administrate
   module Field
@@ -35,6 +36,12 @@ module Administrate
 
         all_fields.reject do |nested_field|
           skipped_fields.include?(nested_field.attribute)
+        end
+      end
+
+      def nested_attributes
+        associated_dashboard.collection_attributes.reject do |nested_attribute|
+          skipped_fields.include?(nested_attribute)
         end
       end
 
@@ -90,6 +97,10 @@ module Administrate
         options.fetch(:association_name) do
           associated_class_name.underscore.pluralize[/([^\/]*)$/, 1]
         end
+      end
+
+      def associated_collection(order = self.order)
+        Administrate::Page::NestedCollection.new(associated_dashboard, order: order, collection_attributes: nested_attributes)
       end
 
       def associated_form
